@@ -147,10 +147,6 @@ async def proof(m: Message, state: FSMContext):
 async def proof_wrong(m: Message):
     await m.answer("Пришлите TXID текстом или скриншотом. Или нажмите «❌ Отмена».")
 
-except Exception:
-        pass
-    await m.delete()  # убираем сообщение пользователя, чтобы окно не плодилось
-
 @dp.message(Command("orders"))
 async def my_orders_cmd(m: Message):
     orders = await get_user_orders(DB_PATH, m.from_user.id)
