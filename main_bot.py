@@ -19,9 +19,9 @@ class PayFlow(StatesGroup):
 # ---------- клавиатуры ----------
 def menu_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🛍 Каталог", callback_data="menu_catalog")],
-        [InlineKeyboardButton(text="🆘 Поддержка", callback_data="menu_support"),
-         InlineKeyboardButton(text="📦 Мои заказы", callback_data="menu_orders")]
+        [InlineKeyboardButton(text="❄️ витрина", callback_data="menu_catalog")],
+        [InlineKeyboardButton(text="🆘 саппорт", callback_data="menu_support"),
+         InlineKeyboardButton(text="📦 история заказов", callback_data="menu_orders")]
     ])
 
 def catalog_kb(products):
@@ -39,18 +39,18 @@ STATUS_ICONS = {"waiting": "⏳", "paid": "✅", "rejected": "❌"}
 # ---------- главное меню ----------
 @dp.message(CommandStart())
 async def start(m: Message):
-    await m.answer("🛍 *Добро пожаловать в магазин!*\nВыберите раздел:",
+    await m.answer("❄️ *Добро пожаловать в магазин!*\nВыберите раздел:",
                    parse_mode="Markdown", reply_markup=menu_kb())
 
 @dp.callback_query(F.data == "menu")
 async def to_menu(c: CallbackQuery):
-    await c.message.edit_text("🛍 *Главное меню*\nВыберите раздел:",
+    await c.message.edit_text("❄️ *Главное меню*\nВыберите раздел:",
                               parse_mode="Markdown", reply_markup=menu_kb())
 
 @dp.callback_query(F.data == "menu_support")
 async def support(c: CallbackQuery):
     await c.message.edit_text(
-        f"🆘 *Поддержка*\n\nПо любым вопросам пишите: {SUPPORT_USERNAME}",
+        f"🆘 *саппорт*\n\nПо любым вопросам пишите: {SUPPORT_USERNAME}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text=f"✍️ Написать {SUPPORT_USERNAME}",
@@ -66,12 +66,12 @@ async def my_orders(c: CallbackQuery):
     else:
         txt = "\n".join(f"{STATUS_ICONS.get(o[3],'')} #{o[0]} — {o[1]} — {o[2]}$ ({o[4]})"
                          for o in orders)
-    await c.message.edit_text(f"📦 *Ваши заказы:*\n{txt}", parse_mode="Markdown",
+    await c.message.edit_text(f"📦 *история заказов:*\n{txt}", parse_mode="Markdown",
                               reply_markup=back_kb("menu", "◀️ В меню"))
 
 @dp.callback_query(F.data == "menu_catalog")
 async def catalog(c: CallbackQuery):
-    await c.message.edit_text("🛍 *Каталог:*", parse_mode="Markdown",
+    await c.message.edit_text("❄️ *витрина:*", parse_mode="Markdown",
                               reply_markup=catalog_kb(await get_products(DB_PATH)))
 
 # ---------- товар и оплата ----------
@@ -154,7 +154,7 @@ async def my_orders_cmd(m: Message):
         return await m.answer("У вас пока нет заказов.")
     txt = "\n".join(f"{STATUS_ICONS.get(o[3],'')} #{o[0]} — {o[1]} — {o[2]}$ ({o[4]})"
                      for o in orders)
-    await m.answer(f"📦 Ваши заказы:\n{txt}")
+    await m.answer(f"📦 история заказов:\n{txt}")
 
 async def main():
     await init_db(DB_PATH)
